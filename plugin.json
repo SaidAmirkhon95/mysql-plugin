@@ -1,9 +1,9 @@
 {
-    "name": "mysql-plugin",
-    "version": "1.0.0",
-    "datasource": "MySQL",
-    "capabilities": ["scan", "metadata", "preview"],
-    "entry": "index.js",
-    "ui": "TablePreview"
-  }
-  
+  "name": "mysql-plugin",
+  "version": "1.0.0",
+  "datasource": "MySQL",
+  "capabilities": ["scan", "metadata", "preview"],
+  "entry": "index.js",
+  "ui": "TablePreview",
+  "legacy": true
+}
