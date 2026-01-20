@@ -8,15 +8,21 @@ const dummyRows = [
 ];
 
 parentPort.on("message", (msg) => {
-  // NEW protocol (host -> plugin)
-  if (msg && msg.type === "request") {
-    // We intentionally do NOT support commands in this legacy plugin
-    if (msg.action === "command") {
+  if (!msg || msg.type !== "request") return;
+
+  // Host calls commands like: { type:"request", action:"command", payload:{commandId:"mysql.scan"} }
+  if (msg.action === "command") {
+    const { commandId } = msg.payload || {};
+
+    if (commandId === "mysql.scan") {
+      // ❌ INTENTIONALLY wrong: return JSON instead of CSV
       parentPort.postMessage({
         type: "response",
         id: msg.id,
-        error:
-          "mysql-plugin is a legacy plugin (no commands/CSV contract). Please update plugin to host contract."
+        payload: {
+          format: "json",
+          data: dummyRows
+        }
       });
       return;
     }
@@ -24,20 +30,14 @@ parentPort.on("message", (msg) => {
     parentPort.postMessage({
       type: "response",
       id: msg.id,
-      error: `mysql-plugin legacy: unsupported request action "${msg.action}"`
+      error: "Unknown commandId: " + commandId
     });
     return;
   }
 
-  // OLD protocol (legacy)
-  if (msg && msg.action === "scan") {
-    parentPort.postMessage({ rows: dummyRows });
-  } else if (msg && msg.action === "metadata") {
-    parentPort.postMessage({
-      tables: ["users", "orders"],
-      description: "Dummy MySQL plugin (legacy)"
-    });
-  } else {
-    parentPort.postMessage({ error: `Unknown action: ${msg?.action}` });
-  }
+  parentPort.postMessage({
+    type: "response",
+    id: msg.id,
+    error: `Unsupported action: ${msg.action}`
+  });
 });

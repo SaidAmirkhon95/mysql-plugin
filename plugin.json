@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "datasource": "MySQL",
   "capabilities": ["scan", "metadata", "preview"],
+  "commands": [
+    { "id": "mysql.scan", "title": "Scan MySQL" }
+  ],
   "entry": "index.js",
+  "engines": { "catalog": "^1.0.0" },
   "ui": "TablePreview",
   "legacy": true
 }
